@@ -134,6 +134,71 @@ body,
     /* white-space: nowrap; /* Prevent text wrapping */
 }
 
+/* Help Info Display */
+.help-info {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    padding: 10px 12px 8px;
+    padding-top: 28px; /* Space for close button */
+    z-index: 1000;
+    font-family: "SF Mono", "Consolas", "Menlo", monospace;
+    font-size: 15px;
+    font-weight: 500;
+    color: #ffffff;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    min-width: 280px; /* Kengroq bo'lishi mumkin */
+    max-width: 400px; /* Maksimal kenglik */
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 8px; /* Paragraphlar orasidagi bo'shliq */
+    visibility: hidden; /* Dastlab yashirin */
+}
+
+.help-info h3 {
+    margin: 0 0 10px 0;
+    color: #667eea;
+    font-size: 18px;
+}
+
+.help-info p {
+    margin: 0;
+    line-height: 1.4;
+}
+
+.help-info .help-close-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.7);
+    transition: all 0.2s ease;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+}
+
+.help-info .help-close-btn:hover {
+    color: #ffffff;
+    transform: scale(1.1);
+}
+
+.help-info .help-close-btn svg {
+    width: 18px;
+    height: 18px;
+    stroke-width: 2;
+}
+
 /* Close Button Style */
 .close-btn {
     position: absolute;
@@ -202,6 +267,29 @@ body,
         font-size: 12px;
         min-width: 120px; /* Adjusted for mobile */
         border-radius: 4px;
+    }
+
+    .help-info {
+        top: 15px;
+        right: 15px;
+        padding: 8px 10px;
+        padding-top: 24px;
+        font-size: 12px;
+        min-width: 250px;
+        max-width: 350px;
+        border-radius: 4px;
+    }
+
+    .help-info .help-close-btn {
+        top: 6px;
+        right: 6px;
+        width: 20px;
+        height: 20px;
+    }
+
+    .help-info .help-close-btn svg {
+        width: 16px;
+        height: 16px;
     }
 
     .close-btn {

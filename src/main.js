@@ -2,13 +2,18 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import mapboxgl from "mapbox-gl";
 import { btnActive, setupCloseButton } from "./utils/ui.js";
 import { updateGeolocation } from "./utils/geolocation.js";
-import { activateLineDrawing, deactivateLineDrawing, getDrawnLineGeoJSON, isLineModeActive, clearDrawnLine } from "./utils/drawing.js";
+import { activateLineDrawing, deactivateLineDrawing, getDrawnLineGeoJSON, isLineModeActive, clearDrawnLine, activatePolygonDrawing, deactivatePolygonDrawing, getDrawnPolygonGeoJSON, isPolygonModeActive, clearDrawnPolygon } from "./utils/drawing.js";
+import { extractMapData } from "./utils/map_utils.js";
 
 const myLocation = document.querySelector('[data-tool="location"]');
 const markerBtn = document.querySelector('[data-tool="marker"]');
 const lineBtn = document.querySelector('[data-tool="line"]');
+const extractBtn = document.querySelector('[data-tool="extract"]');
+const helpBtn = document.querySelector('[data-tool="help"]');
 const userInfoPanel = document.querySelector(".user-info");
+const helpInfoPanel = document.querySelector(".help-info");
 const closeBtn=document.querySelector(".close-btn")
+const helpCloseBtn = document.querySelector(".help-close-btn");
 const downloadBtn = document.querySelector('[data-tool="download"]');
 
 const controlsButtons = document.querySelectorAll(
@@ -85,6 +90,11 @@ map.on("load", async () => {
     // Boshqa rejimni o'chirish
     if (isLineModeActive()) {
       deactivateLineDrawing(map);
+      clearDrawnLine(map);
+    }
+    if (isPolygonModeActive()) {
+      deactivatePolygonDrawing(map);
+      clearDrawnPolygon(map);
     }
 
     if (!isMarkerModeActive) {
@@ -108,11 +118,72 @@ map.on("load", async () => {
       }
       coords[0].textContent = `[0,0]`;
     }
+    if (isPolygonModeActive()) {
+      deactivatePolygonDrawing(map);
+      clearDrawnPolygon(map);
+    }
 
     if (!isLineModeActive()) {
       activateLineDrawing(map, coords);
     } else {
       deactivateLineDrawing(map);
+    }
+  };
+
+  extractBtn.onclick = () => {
+    btnActive(extractBtn, controlsButtons);
+    // Boshqa rejimni o'chirish
+    if (isMarkerModeActive) {
+      isMarkerModeActive = false;
+      map.off("click", handleMapClick);
+      if (userMarker) {
+        userMarker.remove();
+        userMarker = null;
+      }
+      coords[0].textContent = `[0,0]`;
+    }
+    if (isLineModeActive()) {
+      deactivateLineDrawing(map);
+      clearDrawnLine(map);
+      coords[0].textContent = `[0,0]`;
+    }
+    
+    if (!isPolygonModeActive()) {
+      activatePolygonDrawing(map, coords);
+    } else {
+      deactivatePolygonDrawing(map);
+    }
+  };
+
+  helpBtn.onclick = () => {
+    btnActive(helpBtn, controlsButtons);
+    // Boshqa rejimni o'chirish
+    if (isMarkerModeActive) {
+      isMarkerModeActive = false;
+      map.off("click", handleMapClick);
+      if (userMarker) {
+        userMarker.remove();
+        userMarker = null;
+      }
+      coords[0].textContent = `[0,0]`;
+    }
+    if (isLineModeActive()) {
+      deactivateLineDrawing(map);
+      clearDrawnLine(map);
+      coords[0].textContent = `[0,0]`;
+    }
+    if (isPolygonModeActive()) {
+      deactivatePolygonDrawing(map);
+      clearDrawnPolygon(map);
+      coords[0].textContent = `[0,0]`;
+    }
+
+    // Help panelini ko'rsatish/yashirish
+    if (helpInfoPanel.style.visibility === "visible") {
+      helpInfoPanel.style.visibility = "hidden";
+    } else {
+      helpInfoPanel.style.visibility = "visible";
+      userInfoPanel.style.visibility = "hidden"; // User info panelini yashirish
     }
   };
 
@@ -148,6 +219,11 @@ map.on("load", async () => {
       featuresToDownload.push(drawnLine);
     }
 
+    const drawnPolygon = getDrawnPolygonGeoJSON();
+    if (drawnPolygon) {
+      featuresToDownload.push(drawnPolygon);
+    }
+
     if (featuresToDownload.length > 0) {
       const geojson = {
         type: "FeatureCollection",
@@ -169,4 +245,9 @@ map.on("load", async () => {
   };
 
   setupCloseButton(closeBtn, userInfoPanel);
+
+  // Help info panelni yopish
+  helpCloseBtn.onclick = () => {
+    helpInfoPanel.style.visibility = "hidden";
+  };
 });
