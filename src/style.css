@@ -131,7 +131,7 @@ body,
 }
 
 .user-info div {
-    white-space: nowrap; /* Prevent text wrapping */
+    /* white-space: nowrap; /* Prevent text wrapping */
 }
 
 /* Close Button Style */

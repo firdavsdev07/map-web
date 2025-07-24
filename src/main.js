@@ -2,11 +2,14 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import mapboxgl from "mapbox-gl";
 import { btnActive, setupCloseButton } from "./utils/ui.js";
 import { updateGeolocation } from "./utils/geolocation.js";
+import { activateLineDrawing, deactivateLineDrawing, getDrawnLineGeoJSON, isLineModeActive, clearDrawnLine } from "./utils/drawing.js";
 
 const myLocation = document.querySelector('[data-tool="location"]');
 const markerBtn = document.querySelector('[data-tool="marker"]');
+const lineBtn = document.querySelector('[data-tool="line"]');
 const userInfoPanel = document.querySelector(".user-info");
-const closeBtn=document.getElementsByClassName("close-btn")
+const closeBtn=document.querySelector(".close-btn")
+const downloadBtn = document.querySelector('[data-tool="download"]');
 
 const controlsButtons = document.querySelectorAll(
   `.controls-container [data-tool]`,
@@ -42,7 +45,6 @@ const locationInfo = {
   // container: document.getElementById("location-info"),
 };
 map.on("load", async () => {
-  console.log("Xarita yuklandi");
   // const response = await (await fetch("/data.geojson")).json();
   map.addSource("me", {
     type: "geojson",
@@ -76,20 +78,95 @@ map.on("load", async () => {
     updateGeolocation(map, coords, locationInfo, userInfoPanel, state);
   };
   let userMarker = null;
+  let isMarkerModeActive = false; // Marker rejimini kuzatish uchun o'zgaruvchi
 
-  window.onclick = () => {
-    map.once("click", (e) => {
-      const lngLat = e.lngLat;
-      // console.log(e);
-      if (userMarker) {
-        userMarker.setLngLat(lngLat);
-      } else {
-        userMarker = new mapboxgl.Marker({ color: "red" })
-          .setLngLat(lngLat)
-          .addTo(map);
-      }
-    });
+  markerBtn.onclick = () => {
     btnActive(markerBtn, controlsButtons);
+    // Boshqa rejimni o'chirish
+    if (isLineModeActive()) {
+      deactivateLineDrawing(map);
+    }
 
+    if (!isMarkerModeActive) {
+      isMarkerModeActive = true;
+      map.on("click", handleMapClick);
+    } else {
+      isMarkerModeActive = false;
+      map.off("click", handleMapClick);
+    }
   };
+
+  lineBtn.onclick = () => {
+    btnActive(lineBtn, controlsButtons);
+    // Boshqa rejimni o'chirish
+    if (isMarkerModeActive) {
+      isMarkerModeActive = false;
+      map.off("click", handleMapClick);
+      if (userMarker) {
+        userMarker.remove();
+        userMarker = null;
+      }
+      coords[0].textContent = `[0,0]`;
+    }
+
+    if (!isLineModeActive()) {
+      activateLineDrawing(map, coords);
+    } else {
+      deactivateLineDrawing(map);
+    }
+  };
+
+  function handleMapClick(e) {
+    const lngLat = e.lngLat;
+    if (userMarker) {
+      userMarker.setLngLat(lngLat);
+    } else {
+      userMarker = new mapboxgl.Marker({ color: "red", anchor: 'center' })
+        .setLngLat(lngLat)
+        .addTo(map);
+    }
+    coords[0].textContent = `[${lngLat.lng.toFixed(4)},${lngLat.lat.toFixed(4)}]`;
+  }
+
+  downloadBtn.onclick = () => {
+    const featuresToDownload = [];
+
+    if (userMarker) {
+      const lngLat = userMarker.getLngLat();
+      featuresToDownload.push({
+        type: "Feature",
+        geometry: {
+          type: "Point",
+          coordinates: [lngLat.lng, lngLat.lat],
+        },
+        properties: {},
+      });
+    }
+
+    const drawnLine = getDrawnLineGeoJSON();
+    if (drawnLine) {
+      featuresToDownload.push(drawnLine);
+    }
+
+    if (featuresToDownload.length > 0) {
+      const geojson = {
+        type: "FeatureCollection",
+        features: featuresToDownload,
+      };
+      const dataStr = JSON.stringify(geojson, null, 2);
+      const blob = new Blob([dataStr], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "map_data.geojson";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } else {
+      alert("Yuklab olish uchun xaritada marker yoki chiziq belgilang!");
+    }
+  };
+
+  setupCloseButton(closeBtn, userInfoPanel);
 });
