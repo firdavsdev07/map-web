@@ -11,6 +11,19 @@
         <div id="map">
             <div class="coords">[0,0]</div>
 
+            <!-- Yangi UI element: User Info -->
+            <div class="user-info">
+                <button class="close-btn" title="Close User Info">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+                <div>Lon: <span id="user-lon"></span></div>
+                <div>Lat: <span id="user-lat"></span></div>
+                <div>Speed: <span id="user-speed"></span> km/h</div>
+            </div>
+
             <!-- Enhanced UI Controls with better structure -->
             <div class="ui-controls">
                 <div class="controls-container">
