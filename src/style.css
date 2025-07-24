@@ -1,0 +1,135 @@
+/* Global Styles */
+* {
+    box-sizing: border-box;
+}
+
+html,
+body,
+#map {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    font-family:
+        -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
+        sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+/* Ensure Mapbox logo is visible */
+.mapboxgl-ctrl-bottom-left {
+    display: block;
+}
+.mapboxgl-ctrl-bottom-right {
+    display: block;
+}
+
+/* UI Controls Container */
+.ui-controls {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 1000;
+}
+
+.controls-container {
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0;
+    padding: 15px 8px; /* Increased vertical padding */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Distribute items vertically */
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    width: 56px; /* Explicitly set a narrower width */
+    height: 350px; /* Set a fixed height */
+}
+
+/* Button Styles */
+.btn {
+    width: 100%; /* Full width of the container */
+    height: 40px;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    color: rgba(255, 255, 255, 0.7);
+    transition: all 0.2s ease;
+}
+
+.btn:hover {
+    color: #ffffff;
+    transform: scale(1.1);
+}
+
+/* Active Button State */
+.btn.active {
+    color: #667eea;
+}
+
+.btn svg {
+    width: 22px;
+    height: 22px;
+    stroke-width: 2;
+}
+
+/* Separator between tool groups */
+.separator {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.15);
+    margin: 4px 0;
+}
+
+/* Coordinates Display */
+.coords {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0;
+    padding: 8px 12px;
+    z-index: 1000;
+    font-family: "SF Mono", "Consolas", "Menlo", monospace;
+    font-size: 15px;
+    font-weight: 500;
+    color: #ffffff;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    min-width: 100px;
+    text-align: center;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .ui-controls {
+        top: 15px;
+        left: 15px;
+    }
+
+    .controls-container {
+        padding: 8px 6px;
+        width: 52px;
+    }
+
+    .btn {
+        height: 38px;
+    }
+
+    .btn svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .coords {
+        bottom: 15px;
+        left: 15px;
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+}
