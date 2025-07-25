@@ -1,4 +1,10 @@
-export function updateGeolocation(map, coords, locationInfo, userInfoPanel, state) {
+export function updateGeolocation(
+  map,
+  coords,
+  locationInfo,
+  userInfoPanel,
+  state,
+) {
   if (!state.tracking) {
     state.tracking = true;
     state.id = navigator.geolocation.getCurrentPosition(

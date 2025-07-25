@@ -2,7 +2,18 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import mapboxgl from "mapbox-gl";
 import { btnActive, setupCloseButton } from "./utils/ui.js";
 import { updateGeolocation } from "./utils/geolocation.js";
-import { activateLineDrawing, deactivateLineDrawing, getDrawnLineGeoJSON, isLineModeActive, clearDrawnLine, activatePolygonDrawing, deactivatePolygonDrawing, getDrawnPolygonGeoJSON, isPolygonModeActive, clearDrawnPolygon } from "./utils/drawing.js";
+import {
+  activateLineDrawing,
+  deactivateLineDrawing,
+  getDrawnLineGeoJSON,
+  isLineModeActive,
+  clearDrawnLine,
+  activatePolygonDrawing,
+  deactivatePolygonDrawing,
+  getDrawnPolygonGeoJSON,
+  isPolygonModeActive,
+  clearDrawnPolygon,
+} from "./utils/drawing.js";
 import { extractMapData } from "./utils/map_utils.js";
 
 const myLocation = document.querySelector('[data-tool="location"]');
@@ -12,7 +23,7 @@ const extractBtn = document.querySelector('[data-tool="extract"]');
 const helpBtn = document.querySelector('[data-tool="help"]');
 const userInfoPanel = document.querySelector(".user-info");
 const helpInfoPanel = document.querySelector(".help-info");
-const closeBtn=document.querySelector(".close-btn")
+const closeBtn = document.querySelector(".close-btn");
 const helpCloseBtn = document.querySelector(".help-close-btn");
 const downloadBtn = document.querySelector('[data-tool="download"]');
 
@@ -50,10 +61,10 @@ const locationInfo = {
   // container: document.getElementById("location-info"),
 };
 map.on("load", async () => {
-  // const response = await (await fetch("/data.geojson")).json();
+  const response = await (await fetch("/data.geojson")).json();
   map.addSource("me", {
     type: "geojson",
-    data: null,
+    data: response,
   });
   map.addLayer({
     id: "me",
@@ -147,7 +158,7 @@ map.on("load", async () => {
       clearDrawnLine(map);
       coords[0].textContent = `[0,0]`;
     }
-    
+
     if (!isPolygonModeActive()) {
       activatePolygonDrawing(map, coords);
     } else {
@@ -192,7 +203,7 @@ map.on("load", async () => {
     if (userMarker) {
       userMarker.setLngLat(lngLat);
     } else {
-      userMarker = new mapboxgl.Marker({ color: "red", anchor: 'center' })
+      userMarker = new mapboxgl.Marker({ color: "red", anchor: "center" })
         .setLngLat(lngLat)
         .addTo(map);
     }
